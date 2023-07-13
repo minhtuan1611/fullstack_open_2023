@@ -1,0 +1,16 @@
+GET http://localhost:3001/info
+
+###
+DELETE http://localhost:3001/api/persons/10924
+
+###
+POST http://localhost:3001/api/persons/ HTTP/1.1
+content-type: application/json
+
+{
+    "name":"mtuannguyen",
+    "number":"0907400509"
+
+}
+###
+GET http://localhost:3001/api/persons/4

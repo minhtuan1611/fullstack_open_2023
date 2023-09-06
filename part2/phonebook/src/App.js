@@ -20,6 +20,7 @@ const App = () => {
     });
   };
   useEffect(hook, []);
+
   const addPerson = (event) => {
     event.preventDefault();
     const newPerson = { name: newName, number: newNum };
@@ -52,21 +53,30 @@ const App = () => {
           });
       }
     } else {
-      const nameObject = {
-        name: newName,
-        id: persons.length + 1,
-        number: newNum,
-      };
-      personService.create(nameObject).then((addedPerson) => {
-        setPersons(persons.concat(nameObject));
-        setStatus("success");
-        setMessage(`Added ${nameObject.name}`);
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
-        setNewName("");
-        setNewNum("");
-      });
+      try {
+        if (!newName || !newNum) {
+          setMessage(`Name or number is missing`);
+          throw "Name or number is missing";
+        }
+        const nameObject = {
+          name: newName,
+          id: persons.length + 1,
+          number: newNum,
+        };
+
+        personService.create(nameObject).then((addedPerson) => {
+          setPersons(persons.concat(nameObject));
+          setStatus("success");
+          setMessage(`Added ${nameObject.name}`);
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+          setNewName("");
+          setNewNum("");
+        });
+      } catch (e) {
+        console.log("Error ", e);
+      }
     }
   };
 

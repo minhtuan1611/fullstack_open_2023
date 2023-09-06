@@ -10,7 +10,6 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNum, setNewNum] = useState("");
   const [filter, setfilter] = useState("");
-
   const [status, setStatus] = useState(null);
   const [Message, setMessage] = useState(null);
 
@@ -55,8 +54,7 @@ const App = () => {
     } else {
       try {
         if (!newName || !newNum) {
-          setMessage(`Name or number is missing`);
-          throw "Name or number is missing";
+          throw new Error("Name or number is missing");
         }
         const nameObject = {
           name: newName,
@@ -74,8 +72,13 @@ const App = () => {
           setNewName("");
           setNewNum("");
         });
-      } catch (e) {
-        console.log("Error ", e);
+      } catch (error) {
+        setStatus("error");
+        setMessage(`Error: ${error.message}`);
+        setTimeout(() => {
+          setStatus(null);
+          setMessage(null);
+        }, 5000);
       }
     }
   };

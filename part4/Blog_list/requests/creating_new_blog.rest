@@ -1,0 +1,8 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+{
+  "title": "Let's Travel",
+  "author": "Mtuan Nguyen",
+  "url": "https://www.saltinourhair.com/vietnam/",
+  "likes": 20
+}

@@ -2,6 +2,16 @@ const blogsRouter = require('express').Router()
 const Blog = require('../model/blog')
 const User = require('../model/user')
 
+const jwt = require('jsonwebtoken')
+
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
+
 blogsRouter.get('/',async (req,res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   res.json(blogs)
@@ -22,29 +32,47 @@ blogsRouter.get('/:id', async( req, res, next) => {
 
 blogsRouter.post('/', async (req, res) => {
   const body = req.body
+  try{
+    const decodedToken = jwt.verify(getTokenFrom(req), process.env.SECRET)
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: 'token invalid' })
+    }
+    const user = await User.findById(decodedToken.id)
 
-  const user = await User.findById(body.userId)
+    if (!body.title || !body.url) {
+      return res.status(400).json({ error: 'missing title or irl' })
+    }
 
-  if (!body.title || !body.url) {
-    return res.status(400).json({ error: 'missing title or irl' })
+    const blog = new Blog({
+      title: body.title,
+      url: body.url,
+      author: body.author,
+      likes: body.likes,
+      user: user._id
+    })
+    const savedBlog = await blog.save()
+    user.blogs = user.blogs.concat(savedBlog._id)
+    await user.save()
+    res.status(201).json(savedBlog)
+  } catch(error) {
+    console.error(error)
+    res.status(500).json({ error: 'Server error' })
   }
-
-  const blog = new Blog({
-    title: body.title,
-    url: body.url,
-    author: body.author,
-    likes: body.likes,
-    user: user.id
-  })
-  const savedBlog = await blog.save()
-  user.blogs = user.blogs.concat(savedBlog.id)
-  await user.save()
-  res.status(201).json(savedBlog)
 })
 
 blogsRouter.delete('/:id', async (request, response, next) => {
   try {
-    await Blog.findByIdAndRemove(request.params.id)
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: 'token invalid' })
+    }
+    const blog = await Blog.findById(request.params.id)
+    if (blog.user.toString() === decodedToken.id) {
+      await Blog.findByIdAndRemove(request.params.id)
+      response.status(204).end()
+    } else {
+      response.status(403).json({ error: 'You do not have permission to delete this blog' })
+    }
     response.status(204).end()
   } catch (exception) {
     next(exception)

@@ -1,8 +1,9 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../model/blog')
+const User = require('../model/user')
 
 blogsRouter.get('/',async (req,res) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   res.json(blogs)
 })
 
@@ -20,16 +21,24 @@ blogsRouter.get('/:id', async( req, res, next) => {
 })
 
 blogsRouter.post('/', async (req, res) => {
-  const { title, author, url, likes } = req.body
+  const body = req.body
 
-  author
-  likes
+  const user = await User.findById(body.userId)
 
-  if (!title || !url) {
+  if (!body.title || !body.url) {
     return res.status(400).json({ error: 'missing title or irl' })
   }
-  const blog = new Blog(req.body)
+
+  const blog = new Blog({
+    title: body.title,
+    url: body.url,
+    author: body.author,
+    likes: body.likes,
+    user: user.id
+  })
   const savedBlog = await blog.save()
+  user.blogs = user.blogs.concat(savedBlog.id)
+  await user.save()
   res.status(201).json(savedBlog)
 })
 
@@ -61,7 +70,5 @@ blogsRouter.put('/:id', async (request, response, next) => {
     next(error)
   }
 })
-
-
 
 module.exports = blogsRouter

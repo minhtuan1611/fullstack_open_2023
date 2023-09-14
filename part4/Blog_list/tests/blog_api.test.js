@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const Blog = require('../model/blog')
 const app = require('../app')
+const bcrypt = require('bcrypt')
+const User = require('../model/user')
 
 const api = supertest(app)
 
@@ -100,6 +102,43 @@ test('Update blog', async () => {
     .expect(200)
 
   expect(response.body.author).toBe(upBlog.author)
+})
+
+describe('when there is initially one user in db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+
+  const usersInDb = async () => {
+    const users = await User.find({})
+    return users.map(u => u.toJSON())
+  }
+
+  test(' invalid user is created', async () => {
+    const usersAtStart = await usersInDb()
+
+    const newUser = {
+      username: 'mlasdfasdfa',
+      name: 'Matti Luukkainen',
+      password: 'sf',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('expected `username` or `password` must be at least 3 character Long')
+
+    const usersAtEnd = await usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
+  })
 })
 
 afterAll(async () => {

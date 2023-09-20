@@ -53,7 +53,19 @@ blogsRouter.post('/', async (req, res) => {
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
-    res.status(201).json(savedBlog)
+
+    const userWithDetails = await User.findById(decodedToken.id).populate(
+      'blogs',
+      {
+        title: 1,
+        url: 1,
+        likes: 1,
+        author: 1,
+        username: 1,
+      }
+    )
+
+    res.status(201).json({ ...savedBlog.toJSON(), user: userWithDetails })
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'Server error' })

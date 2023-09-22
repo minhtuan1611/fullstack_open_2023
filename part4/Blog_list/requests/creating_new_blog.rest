@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im10dWFuIiwiaWQiOiI2NTAyYjM4OTM2NDM1YzM0Y2MxZDM5OWQiLCJpYXQiOjE2OTUxMjQzNzksImV4cCI6MTY5NTEyNzk3OX0.tG58KWbodpLI2Q0K9hG1AZWXtmaeZZQMllI6AP18RU4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im10dWFuIiwiaWQiOiI2NTBjNTk2MzgyYjUxYTViODllNDU5YjQiLCJpYXQiOjE2OTUzMTA3OTcsImV4cCI6MTY5NTMxNDM5N30.jbOUTAktcNpDzfUbdmu-x8z7wIxafA6ES4ERinB-anI
 
 
 {
@@ -16,9 +16,19 @@ Content-Type: application/json
 
 {
   "username": "mtuan",
-  "password": "thuygiang"
+  "password": "mtuan"
 }
 
 ###
 DELETE http://localhost:3003/api/blogs/6502d08e7263284565f4bd99
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im10dWFuIiwiaWQiOiI2NTAyYjM4OTM2NDM1YzM0Y2MxZDM5OWQiLCJpYXQiOjE2OTQ2ODMzMDEsImV4cCI6MTY5NDY4NjkwMX0.qKU0rNmM1zi0B9gRTWgLnqbTLKeUhoKAHmqexG5VTOA
+
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "name":"thuygiang",
+  "username": "thuygiang",
+  "password": "thuygiang"
+}

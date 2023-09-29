@@ -6,6 +6,7 @@ import {
   Link,
   useMatch,
 } from "react-router-dom"
+import { useField } from "./hooks"
 const Menu = () => {
   const padding = {
     paddingRight: 5,
@@ -72,9 +73,9 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState("")
-  const [author, setAuthor] = useState("")
-  const [info, setInfo] = useState("")
+  const author = useField("text")
+  const content = useField("text")
+  const info = useField("text")
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -86,35 +87,40 @@ const CreateNew = (props) => {
     })
   }
 
+  const handleReset = () => {
+    author.reset()
+    content.reset()
+    info.reset()
+  }
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
-          content
+          content:
           <input
-            name="content"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            type={content.type}
+            value={content.value}
+            onChange={content.onChange}
           />
         </div>
         <div>
-          author
+          author:
           <input
-            name="author"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
+            type={author.type}
+            value={author.value}
+            onChange={author.onChange}
           />
         </div>
         <div>
-          url for more info
-          <input
-            name="info"
-            value={info}
-            onChange={(e) => setInfo(e.target.value)}
-          />
+          url for more info:
+          <input type={info.type} value={info.value} onChange={info.onChange} />
         </div>
         <button>create</button>
+        <button type="button" onClick={handleReset}>
+          reset
+        </button>
       </form>
     </div>
   )
@@ -152,8 +158,15 @@ const App = () => {
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
-    setAnecdotes(anecdotes.concat(anecdote))
-    setNotification(`Anecdote "${anecdote.content}" created successfully!`)
+    const newAnecdote = {
+      content: anecdote.content.value,
+      info: anecdote.info.value,
+      author: anecdote.author.value,
+      id: anecdote.id,
+      votes: 0,
+    }
+    setAnecdotes(anecdotes.concat(newAnecdote))
+    setNotification(`a new anecdote "${newAnecdote.content}" created!`)
   }
 
   const anecdoteById = (id) => anecdotes.find((a) => a.id === id)

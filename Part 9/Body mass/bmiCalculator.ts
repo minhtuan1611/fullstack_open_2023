@@ -1,6 +1,6 @@
 function calculateBmi(height: number, weight: number): string {
-  const heightInMeters = height / 100;
-  const bmi = weight / (heightInMeters * heightInMeters);
+  const heightMeter = height / 100;
+  const bmi = weight / (heightMeter * heightMeter);
 
   if (bmi < 18.5) {
     return "Underweight";
@@ -18,9 +18,7 @@ const height = Number(args[0]);
 const weight = Number(args[1]);
 
 if (isNaN(height) || isNaN(weight)) {
-  console.log(
-    "Please provide valid height and weight as command-line arguments."
-  );
+  console.log("Please provide height and weight.");
 } else {
   const result = calculateBmi(height, weight);
   console.log(result);

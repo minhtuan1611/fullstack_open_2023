@@ -19,8 +19,7 @@ function calculateExercises(
 
   const success = average >= target;
   let rating = 1;
-  let ratingDescription = "bad";
-
+  let ratingDescription = "not too bad but could be better";
   if (success) {
     rating = 3;
     ratingDescription = "good";

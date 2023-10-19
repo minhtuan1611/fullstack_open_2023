@@ -1,4 +1,4 @@
-interface ExerciseResult {
+interface Result {
   periodLength: number;
   trainingDays: number;
   success: boolean;
@@ -8,14 +8,11 @@ interface ExerciseResult {
   average: number;
 }
 
-function calculateExercises(
-  dailyHours: number[],
-  target: number
-): ExerciseResult {
-  const periodLength = dailyHours.length;
-  const trainingDays = dailyHours.filter((hours) => hours > 0).length;
+function calculateExercises(dailyH: number[], target: number): Result {
+  const periodLength = dailyH.length;
+  const trainingDays = dailyH.filter((hours) => hours > 0).length;
   const average =
-    dailyHours.reduce((total, hours) => total + hours, 0) / periodLength;
+    dailyH.reduce((total, hours) => total + hours, 0) / periodLength;
 
   const success = average >= target;
   let rating = 1;

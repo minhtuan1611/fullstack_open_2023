@@ -1,7 +1,9 @@
 import express from "express";
 import calculateBmi from "./bmiCalculator";
-import { calculator, Operation } from "./calculator";
+import calculateExercises, { Result } from "./exerciseCalculator";
 const app = express();
+
+app.use(express.json());
 
 app.get("/hello", (_req, res) => {
   res.send("Hello Full Stack!");
@@ -23,18 +25,16 @@ app.get("/bmi", (req, res) => {
   });
 });
 
-app.post("/calculate", (req, res) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const { value1, value2, op } = req.body;
+app.post("/exercises", (req, res) => {
+  const { daily_exercises, target } = req.body;
+  if (!Array.isArray(daily_exercises) || isNaN(target)) {
+    return res
+      .status(400)
+      .json({ error: "Please provide valid daily exercises and target" });
+  }
 
-  // validate the data here
-
-  // assert the type
-  const operation = op as Operation;
-
-  const result = calculator(Number(value1), Number(value2), operation);
-
-  return res.send({ result });
+  const result: Result = calculateExercises(daily_exercises, target);
+  return res.json(result);
 });
 
 const port = process.env.PORT || 3000;

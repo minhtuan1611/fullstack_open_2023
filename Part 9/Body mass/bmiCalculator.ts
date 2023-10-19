@@ -1,4 +1,4 @@
-function calculateBmi(height: number, weight: number): string {
+const calculateBmi = (height: number, weight: number): string => {
   const heightMeter = height / 100;
   const bmi = weight / (heightMeter * heightMeter);
 
@@ -11,7 +11,7 @@ function calculateBmi(height: number, weight: number): string {
   } else {
     return "Obese";
   }
-}
+};
 
 const args = process.argv.slice(2);
 const height = Number(args[0]);

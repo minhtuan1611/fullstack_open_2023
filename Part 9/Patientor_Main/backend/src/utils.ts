@@ -49,21 +49,15 @@ const parseSsn = (ssn: unknown): string => {
   return ssn;
 };
 
-const toNewPatientEntry = ({
-  name,
-  dateOfBirth,
-  ssn,
-  gender,
-  occupation,
-}: Fields): NewPatientEntry => {
-  const newEntry: NewPatientEntry = {
+const toNewPatientEntry = (fields: Fields): NewPatientEntry => {
+  const { name, dateOfBirth, ssn, gender, occupation } = fields;
+  return {
     name: parseName(name),
     dateOfBirth: parseDate(dateOfBirth),
     gender: parseGender(gender),
     occupation: parseOccupation(occupation),
     ssn: parseSsn(ssn),
   };
-  return newEntry;
 };
 
 export default toNewPatientEntry;

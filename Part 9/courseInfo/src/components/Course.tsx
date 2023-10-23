@@ -5,8 +5,9 @@ const Course = ({ coursePart }: { coursePart: CoursePart }): JSX.Element => {
     return (
       <div>
         <p>
-          {" "}
-          <b>{coursePart.name}</b>{" "}
+          <b>
+            {coursePart.name} {coursePart.exerciseCount}
+          </b>
         </p>
         <p>
           <i>{coursePart.description}</i>
@@ -17,20 +18,35 @@ const Course = ({ coursePart }: { coursePart: CoursePart }): JSX.Element => {
     return (
       <div>
         <p>
-          {" "}
-          <b>{coursePart.name}</b>{" "}
+          <b>
+            {coursePart.name} {coursePart.exerciseCount}
+          </b>
         </p>
-        <p>project exercises {coursePart.exerciseCount}</p>
+        <p>project exercises {coursePart.groupProjectCount}</p>
       </div>
     );
   else if (coursePart.kind === "background") {
     return (
       <div>
         <p>
-          {" "}
-          <b>{coursePart.name}</b>{" "}
+          <b>
+            {coursePart.name} {coursePart.exerciseCount}
+          </b>
         </p>
+        <p> {coursePart.description}</p>
         <p>submiss to {coursePart.backgroundMaterial}</p>
+      </div>
+    );
+  } else if (coursePart.kind === "special") {
+    return (
+      <div>
+        <p>
+          <b>
+            {coursePart.name} {coursePart.exerciseCount}
+          </b>
+        </p>
+        <p>{coursePart.description}</p>
+        <p>Requirements: {coursePart.requirements.join(", ")}</p>
       </div>
     );
   }

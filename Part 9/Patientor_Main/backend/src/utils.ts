@@ -1,10 +1,13 @@
-import { NewPatientEntry, Gender } from "./types";
+import { Patient, Gender, Entry, NewPatientEntry } from "./types";
+
 type Fields = {
+  id?: unknown;
   name: unknown;
   dateOfBirth: unknown;
   gender: unknown;
   occupation: unknown;
   ssn: unknown;
+  entries: unknown;
 };
 
 const isString = (text: unknown): text is string => {
@@ -13,6 +16,10 @@ const isString = (text: unknown): text is string => {
 
 const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date));
+};
+
+const isEntries = (array: unknown): array is Entry[] => {
+  return Array.isArray(array);
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,15 +56,51 @@ const parseSsn = (ssn: unknown): string => {
   return ssn;
 };
 
-const toNewPatientEntry = (fields: Fields): NewPatientEntry => {
-  const { name, dateOfBirth, ssn, gender, occupation } = fields;
-  return {
+const parseEntries = (entries: unknown): Entry[] => {
+  if (!entries || !isEntries(entries))
+    throw new Error("Incorrect or missing entries" + entries);
+  return entries;
+};
+
+const parseId = (id: unknown): string => {
+  if (!id || !isString(id) || !(id.length > 10))
+    throw new Error("Incorrect or missing id" + id);
+  return id;
+};
+
+const toNewPatientEntry = ({
+  name,
+  dateOfBirth,
+  ssn,
+  gender,
+  occupation,
+  entries,
+}: Fields): NewPatientEntry => {
+  const newEntry: NewPatientEntry = {
     name: parseName(name),
     dateOfBirth: parseDate(dateOfBirth),
     gender: parseGender(gender),
     occupation: parseOccupation(occupation),
     ssn: parseSsn(ssn),
+    entries: parseEntries(entries),
   };
+  return newEntry;
+};
+
+export const loadPatientsJSON = (patientsJSON: Fields[]): Patient[] => {
+  const patients = patientsJSON.map((patient) => {
+    const { id, name, dateOfBirth, gender, occupation, ssn, entries } = patient;
+    return {
+      id: parseId(id),
+      name: parseName(name),
+      dateOfBirth: parseDate(dateOfBirth),
+      gender: parseGender(gender),
+      occupation: parseOccupation(occupation),
+      ssn: parseSsn(ssn),
+      entries: parseEntries(entries),
+    };
+  });
+  return patients;
 };
 
 export default toNewPatientEntry;
